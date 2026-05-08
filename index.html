@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Japanese Vocabulary Flashcards</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">日本語 flashcards</p>
+        <h1>Remember these vocabulary words</h1>
+        <p class="sub">Flip cards, quiz yourself, and save progress in this browser.</p>
+      </div>
+      <div class="stats" aria-live="polite">
+        <div><strong id="seenCount">0</strong><span>seen</span></div>
+        <div><strong id="knownCount">0</strong><span>known</span></div>
+        <div><strong id="dueCount">0</strong><span>due</span></div>
+        <div><strong id="totalCount">0</strong><span>total</span></div>
+      </div>
+    </section>
+
+    <section class="toolbar" aria-label="Study controls">
+      <label>
+        Lesson
+        <select id="lessonSelect"></select>
+      </label>
+      <label>
+        Direction
+        <select id="directionSelect">
+          <option value="jp-en">Japanese → English</option>
+          <option value="en-jp">English → Japanese</option>
+          <option value="mixed">Mixed</option>
+        </select>
+      </label>
+      <label>
+        Filter
+        <select id="filterSelect">
+          <option value="all">All cards</option>
+          <option value="due">Due today</option>
+          <option value="learning">Still learning</option>
+          <option value="known">Known</option>
+          <option value="again">Marked again</option>
+        </select>
+      </label>
+      <label class="searchLabel">
+        Search
+        <input id="searchInput" type="search" placeholder="e.g. きる, birthday, sound" />
+      </label>
+      <button id="shuffleBtn" type="button">Shuffle</button>
+      <button id="resetBtn" type="button" class="ghost">Reset progress</button>
+      <button id="exportBtn" type="button" class="ghost">Export</button>
+      <button id="importBtn" type="button" class="ghost">Import</button>
+      <input id="importFile" type="file" accept=".json" style="display:none" />
+    </section>
+
+    <details class="speechBox" open>
+      <summary>Pronunciation settings</summary>
+      <div class="speechControls">
+        <label>
+          Japanese voice
+          <select id="voiceSelect">
+            <option value="">Loading Japanese voices…</option>
+          </select>
+        </label>
+        <label>
+          Speed
+          <input id="rateInput" type="range" min="0.55" max="1.05" step="0.05" value="0.82" />
+          <span id="rateValue">0.82×</span>
+        </label>
+        <label>
+          Pitch
+          <input id="pitchInput" type="range" min="0.8" max="1.2" step="0.05" value="1" />
+          <span id="pitchValue">1.00</span>
+        </label>
+        <button id="testVoiceBtn" type="button" class="ghost">Test voice</button>
+      </div>
+      <p class="speechNote" id="speechNote">Tip: if every voice sounds robotic, install an enhanced Japanese voice in macOS Speech settings.</p>
+    </details>
+
+    <section class="studyPanel">
+      <button class="navBtn" id="prevBtn" type="button" aria-label="Previous card">‹</button>
+
+      <article class="card" id="card" tabindex="0" role="button" aria-label="Flashcard. Press enter or space to flip.">
+        <div class="cardInner" id="cardInner">
+          <div class="cardFace front">
+            <p class="cardHint" id="frontHint">Japanese</p>
+            <h2 id="frontText">—</h2>
+            <p class="reading" id="frontReading"></p>
+            <button class="speakBtn" id="frontSpeakBtn" type="button" aria-label="Play Japanese pronunciation">🔊 Hear Japanese</button>
+            <p class="tapHint">Tap / press Space to flip</p>
+          </div>
+          <div class="cardFace back">
+            <p class="cardHint" id="backHint">English</p>
+            <h2 id="backText">—</h2>
+            <p class="reading" id="backReading"></p>
+            <button class="speakBtn" id="backSpeakBtn" type="button" aria-label="Play Japanese pronunciation">🔊 Hear Japanese</button>
+            <p class="example" id="exampleText"></p>
+          </div>
+        </div>
+      </article>
+
+      <button class="navBtn" id="nextBtn" type="button" aria-label="Next card">›</button>
+    </section>
+
+    <div class="cardMeta">
+      <span class="lessonTag" id="cardLesson"></span>
+      <span class="srBadge" id="srBadge"></span>
+    </div>
+
+    <section class="answerBar">
+      <button id="againBtn" type="button" class="again">Study again</button>
+      <button id="flipBtn" type="button">Flip</button>
+      <button id="knownBtn" type="button" class="known">I knew it</button>
+    </section>
+
+    <section class="quizBox">
+      <h2>Quick typed quiz</h2>
+      <p id="quizPrompt">Type the answer for the current card.</p>
+      <div class="quizInputRow">
+        <input id="quizInput" type="text" autocomplete="off" placeholder="Type answer here" />
+        <button id="checkBtn" type="button">Check</button>
+      </div>
+      <p id="feedback" class="feedback" aria-live="polite"></p>
+    </section>
+
+    <details class="shortcutsBox">
+      <summary>Keyboard shortcuts</summary>
+      <table class="shortcutsTable">
+        <tbody>
+          <tr><td><kbd>Space</kbd> / <kbd>Enter</kbd></td><td>Flip card</td></tr>
+          <tr><td><kbd>→</kbd></td><td>Next card</td></tr>
+          <tr><td><kbd>←</kbd></td><td>Previous card</td></tr>
+          <tr><td><kbd>K</kbd></td><td>Mark "I knew it"</td></tr>
+          <tr><td><kbd>A</kbd></td><td>Mark "Study again"</td></tr>
+          <tr><td><kbd>S</kbd></td><td>Play pronunciation</td></tr>
+        </tbody>
+      </table>
+    </details>
+
+    <details class="listBox">
+      <summary>Show vocabulary list</summary>
+      <div class="listControls" aria-label="Vocabulary list controls">
+        <label>
+          Show
+          <select id="listPageSizeSelect">
+            <option value="20">20 words</option>
+            <option value="30" selected>30 words</option>
+            <option value="all">Show all</option>
+          </select>
+        </label>
+        <p id="listPageInfo" class="listPageInfo" aria-live="polite">—</p>
+        <div class="listPager">
+          <button id="listPrevBtn" type="button" class="ghost">Previous</button>
+          <button id="listNextBtn" type="button" class="ghost">Next</button>
+        </div>
+      </div>
+      <div id="vocabList" class="vocabList"></div>
+    </details>
+  </main>
+
+  <script src="vocab.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

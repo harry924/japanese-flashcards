@@ -1,0 +1,5 @@
+# Textbook PDF (too large for GitHub, 123 MB)
+*.pdf
+
+# Claude Code internal files
+.claude/
